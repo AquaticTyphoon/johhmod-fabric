@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "johnmod",
+  "id": "modid",
   "version": "${version}",
 
-  "name": "John Mod",
+  "name": "Example Mod",
   "description": "This is an example description! Tell everyone what your mod is about!",
   "authors": [
     "Me!"
@@ -13,16 +13,13 @@
     "sources": "https://github.com/FabricMC/fabric-example-mod"
   },
 
-  "license": "MIT",
+  "license": "CC0-1.0",
   "icon": "assets/johnmod/icon.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
       "net.aquatic.johnmod.JohnMod"
-    ],
-    "client": [
-      "net.aquatic.johnmod.JohnModClient"
     ]
   },
   "mixins": [

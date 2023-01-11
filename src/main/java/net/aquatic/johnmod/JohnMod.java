@@ -9,5 +9,6 @@ public class JohnMod implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+
 	}
 }
