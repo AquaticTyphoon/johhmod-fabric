@@ -20,6 +20,9 @@
   "entrypoints": {
     "main": [
       "net.aquatic.johnmod.JohnMod"
+    ],
+    "client": [
+      "net.aquatic.johnmod.JohnModClient"
     ]
   },
   "mixins": [

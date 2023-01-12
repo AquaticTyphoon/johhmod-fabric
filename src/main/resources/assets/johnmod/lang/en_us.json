@@ -1,0 +1,19 @@
+{
+    "item.johnmod.immortality_gem":"Immortality Gem",
+    "item.johnmod.immortal_blade":"Immortal Blade",
+    "creative.johnmod.main.tab":"John Mod",
+    "item.johnmod.john_spawn_egg":"John Spawn Egg",
+    "entity.johnmod.john":"John",
+    "item.johnmod.baby_john_spawn_egg":"Baby John Spawn Egg",
+    "entity.johnmod.baby_john":"Baby John",
+    "sounds.johnmod.john.ambient": "John growls",
+    "sounds.johnmod.john.hurt": "John screeches",
+    "sounds.johnmod.john.death": "John dies",
+
+    "sounds.johnmod.baby_john.ambient": "Baby John growls",
+    "sounds.johnmod.baby_john.hurt": "Baby John winded",
+    "sounds.johnmod.baby_john.death": "John dies",
+
+    "item.johnmod.immortality_shard": "Immortality Shard",
+    "enchantment.johnmod.blood_lust": "Curse of Blood Lust"
+}

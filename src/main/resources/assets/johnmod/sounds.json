@@ -1,0 +1,44 @@
+{
+  "john_ambient": {
+    "subtitle": "sounds.johnmod.john.ambient",
+    "sounds": [
+      "johnmod:john_ambient"
+    ]
+  },
+
+  "john_hurt": {
+    "subtitle": "sounds.johnmod.john.hurt",
+    "sounds": [
+      "johnmod:john_hurt"
+    ]
+  },
+
+  "john_death": {
+    "subtitle": "sounds.johnmod.john.death",
+    "sounds": [
+      "johnmod:john_death"
+    ]
+  },
+
+  "baby_john_ambient": {
+    "subtitle": "sounds.johnmod.baby_john.ambient",
+    "sounds": [
+      "johnmod:baby_john_ambient"
+    ]
+  },
+
+  "baby_john_hurt": {
+    "subtitle": "sounds.johnmod.baby_john.hurt",
+    "sounds": [
+      "johnmod:baby_john_hurt"
+    ]
+  },
+
+  "baby_john_death": {
+    "subtitle": "sounds.johnmod.baby_john.death",
+    "sounds": [
+      "johnmod:baby_john_death"
+    ]
+  }
+
+}
