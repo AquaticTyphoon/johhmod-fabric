@@ -2,10 +2,14 @@ package net.aquatic.johnmod;
 
 import net.aquatic.johnmod.entity.JohnEntity;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvent;
@@ -26,14 +30,29 @@ public class JohnMod implements ModInitializer {
 	public static final SoundEvent BABY_JOHN_DEATH = SoundEvent.of(new Identifier(MODID, "baby_john_death"));
 	public static final SoundEvent BABY_JOHN_HURT = SoundEvent.of(new Identifier(MODID, "baby_john_hurt"));
 
+
 	public static final EntityType<JohnEntity> JOHN_ENTITY = Registry.register(
 			Registries.ENTITY_TYPE,
-			new Identifier(MODID, "john_entity"), create(SpawnGroup.CREATURE, JohnEntity::new).dimensions(EntityDimensions.fixed(1, 3)).build()
+			new Identifier(MODID, "john"), create(SpawnGroup.CREATURE, JohnEntity::new).dimensions(EntityDimensions.fixed(1, 3)).build()
 	);
+
+
+	public static final Item JOHN_EGG = new SpawnEggItem(JOHN_ENTITY, 0x65895d, 0x422c2c, new FabricItemSettings());
+
+
+	private static final ItemGroup JOHN_MOD_ITEMS = FabricItemGroup.builder(new Identifier(MODID, "items"))
+			.icon(() -> new ItemStack(JOHN_EGG))
+			.build();
+
 
 	@Override
 	public void onInitialize() {
 		GeckoLib.initialize();
 		FabricDefaultAttributeRegistry.register(JOHN_ENTITY, JohnEntity.johnAttributes());
+		Registry.register(Registries.ITEM, new Identifier(MODID, "john_spawn_egg"), JOHN_EGG);
+
+		ItemGroupEvents.modifyEntriesEvent(JOHN_MOD_ITEMS).register(entries -> entries.add(JOHN_EGG));
+
+
 	}
 }

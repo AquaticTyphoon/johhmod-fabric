@@ -1,7 +1,7 @@
 {
     "item.johnmod.immortality_gem":"Immortality Gem",
     "item.johnmod.immortal_blade":"Immortal Blade",
-    "creative.johnmod.main.tab":"John Mod",
+    "itemGroup.johnmod.items":"John Mod Items",
     "item.johnmod.john_spawn_egg":"John Spawn Egg",
     "entity.johnmod.john":"John",
     "item.johnmod.baby_john_spawn_egg":"Baby John Spawn Egg",
