@@ -1,4 +1,4 @@
-package net.aquatic.johnmod.client;
+package net.aquatic.johnmod.client.models;
 
 import net.aquatic.johnmod.JohnMod;
 import net.aquatic.johnmod.entity.JohnEntity;

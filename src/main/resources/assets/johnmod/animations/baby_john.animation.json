@@ -161,7 +161,6 @@
 			}
 		},
 		"animation.John.attack": {
-			"loop": true,
 			"animation_length": 3.5,
 			"bones": {
 				"body": {

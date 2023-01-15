@@ -1,0 +1,15 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern":[
+        "III",
+        "III",
+        "III"
+    ],
+    "key":{
+        "I":{"item": "johnmod:immortality_shard"}
+    },
+    "result":{
+        "item": "johnmod:immortality_gem",
+        "count": 1
+    }
+}

@@ -19,6 +19,7 @@ import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -26,19 +27,18 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
-import net.minecraft.world.World;
 
 import static net.aquatic.johnmod.JohnMod.*;
 
-public class JohnEntity extends PathAwareEntity implements GeoEntity , Monster {
+public class BabyJohnEntity extends PathAwareEntity implements GeoEntity , Monster {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-    public JohnEntity(EntityType<? extends PathAwareEntity> entityType, World world) {
+    public BabyJohnEntity(EntityType<? extends PathAwareEntity> entityType, World world) {
         super(entityType, world);
         this.setPathfindingPenalty(PathNodeType.WATER, -1.0F);
     }
 
     public static DefaultAttributeContainer johnAttributes() {
-        return MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 50).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6).add(EntityAttributes.GENERIC_ATTACK_SPEED, 0.4f).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.5).build();
+        return MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 20).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 3).add(EntityAttributes.GENERIC_ATTACK_SPEED, 0.4f).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.5).build();
     }
 
     @Override
@@ -55,15 +55,15 @@ public class JohnEntity extends PathAwareEntity implements GeoEntity , Monster {
     }
 
     protected SoundEvent getAmbientSound() {
-        return JOHN_AMBIENT;
+        return BABY_JOHN_AMBIENT;
     }
 
     protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-        return JOHN_HURT;
+        return  BABY_JOHN_HURT;
     }
 
     protected SoundEvent getDeathSound() {
-        return JOHN_DEATH;
+        return  BABY_JOHN_DEATH;
     }
 
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenPlay("animation.John.walk");
@@ -92,11 +92,11 @@ public class JohnEntity extends PathAwareEntity implements GeoEntity , Monster {
         if(hasBenHit){
             if(JohnHitTime <= JohnMaxReact){
                 JohnHitTime ++;
-                this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.15f);
+                this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.25f);
             }else{
                 JohnHitTime = 0;
                 hasBenHit = false;
-                this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.5f);
+                this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.6f);
             }
         }
         super.tick();
@@ -105,7 +105,7 @@ public class JohnEntity extends PathAwareEntity implements GeoEntity , Monster {
     @Override
     public boolean tryAttack(Entity target) {
         if(target instanceof LivingEntity livingEntity) {
-            livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 45, 1));
+            livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 22, 0));
         }
         return super.tryAttack(target);
     }
@@ -145,6 +145,4 @@ public class JohnEntity extends PathAwareEntity implements GeoEntity , Monster {
     public EntityGroup getGroup() {
         return JOHN_GROUP;
     }
-
-
 }
