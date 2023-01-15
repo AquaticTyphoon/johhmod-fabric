@@ -32,17 +32,27 @@ public class Blood_Lust extends Enchantment {
     }
 
     @Override
+    public int getMaxLevel() {
+        return 1;
+    }
+
+    @Override
+    public int getMinLevel() {
+        return 1;
+    }
+
+    @Override
     public void onTargetDamaged(LivingEntity user, Entity target, int level) {
         if(target instanceof LivingEntity livingEntity){
             if(livingEntity.getGroup() == JOHN_GROUP){
-                if(livingEntity.getHealth() >= 0){
-                    user.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 20, 0));
+                if(livingEntity.getHealth() - getAttackDamage(1, livingEntity.getGroup()) >= 0){
+                    user.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 60, 0));
                 }else{
                     user.removeStatusEffect(StatusEffects.POISON);
                     user.heal(livingEntity.getMaxHealth() / 50f);
                 }
             }else{
-                user.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 30, 1));
+                user.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 120, 1));
             }
         }
     }
