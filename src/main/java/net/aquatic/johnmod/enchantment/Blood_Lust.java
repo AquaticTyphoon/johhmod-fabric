@@ -9,6 +9,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 import static net.aquatic.johnmod.JohnMod.JOHN_GROUP;
 
@@ -44,12 +45,12 @@ public class Blood_Lust extends Enchantment {
     @Override
     public void onTargetDamaged(LivingEntity user, Entity target, int level) {
         if(target instanceof LivingEntity livingEntity){
-            if(livingEntity.getGroup() == JOHN_GROUP){
+            if(livingEntity.getGroup() == JOHN_GROUP || livingEntity instanceof ServerPlayerEntity){
                 if(livingEntity.getHealth() - getAttackDamage(1, livingEntity.getGroup()) >= 0){
                     user.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 60, 0));
                 }else{
                     user.removeStatusEffect(StatusEffects.POISON);
-                    user.heal(livingEntity.getMaxHealth() / 50f);
+                    user.heal(livingEntity.getMaxHealth() / 10f);
                 }
             }else{
                 user.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 120, 1));
