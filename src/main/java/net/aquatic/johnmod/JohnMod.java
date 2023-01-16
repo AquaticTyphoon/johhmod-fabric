@@ -46,7 +46,7 @@ public class JohnMod implements ModInitializer {
 	);
 	public static final EntityType<BabyJohnEntity> BABY_JOHN_ENTITY = Registry.register(
 			Registries.ENTITY_TYPE,
-			new Identifier(MODID, "baby_john"), create(SpawnGroup.CREATURE, BabyJohnEntity::new).dimensions(EntityDimensions.fixed(1, 3)).fireImmune().build()
+			new Identifier(MODID, "baby_john"), create(SpawnGroup.CREATURE, BabyJohnEntity::new).dimensions(EntityDimensions.fixed(0.5f, 0.5f)).fireImmune().build()
 	);
 	public static final Item JOHN_EGG = new SpawnEggItem(JOHN_ENTITY, 0x65895d, 0x422c2c, new FabricItemSettings());
 	public static final Item BABY_JOHN_EGG = new SpawnEggItem(BABY_JOHN_ENTITY, 0x74a269, 0x422c2c, new FabricItemSettings());

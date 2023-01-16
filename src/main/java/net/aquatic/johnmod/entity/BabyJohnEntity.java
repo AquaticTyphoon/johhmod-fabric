@@ -1,7 +1,9 @@
 package net.aquatic.johnmod.entity;
 
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.NavigationConditions;
 import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.ai.pathing.MobNavigation;
 import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -14,13 +16,13 @@ import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.world.Difficulty;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
+import net.minecraft.world.*;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.structure.StructureKeys;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -29,17 +31,38 @@ import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.function.Predicate;
+
 import static net.aquatic.johnmod.JohnMod.*;
 
 public class BabyJohnEntity extends PathAwareEntity implements GeoEntity , Monster {
+
+    private final BreakDoorGoal breakDoorsGoal;
+    private boolean canBreakDoors;
+
+    private static final Predicate<Difficulty> DOOR_BREAK_DIFFICULTY_CHECKER;
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     public BabyJohnEntity(EntityType<? extends PathAwareEntity> entityType, World world) {
         super(entityType, world);
         this.setPathfindingPenalty(PathNodeType.WATER, -1.0F);
+        this.breakDoorsGoal = new BreakDoorGoal(this, DOOR_BREAK_DIFFICULTY_CHECKER);
     }
 
+    static {
+        DOOR_BREAK_DIFFICULTY_CHECKER = (difficulty) -> {
+            return difficulty == Difficulty.HARD;
+        };
+    }
     public static DefaultAttributeContainer johnAttributes() {
         return MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 20).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 3).add(EntityAttributes.GENERIC_ATTACK_SPEED, 0.4f).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.5).build();
+    }
+
+    @Nullable
+    @Override
+    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt) {
+        this.setCanBreakDoors(this.shouldBreakDoors());
+        return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
+
     }
 
     @Override
@@ -49,11 +72,39 @@ public class BabyJohnEntity extends PathAwareEntity implements GeoEntity , Monst
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
         this.targetSelector.add(4, new ActiveTargetGoal<>(this, IronGolemEntity.class, true));
         this.targetSelector.add(5, new ActiveTargetGoal<>(this, VillagerEntity.class, false));
-        this.goalSelector.add(6, new WanderAroundFarGoal(this, 1.0));
-        this.goalSelector.add(7, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
-        this.goalSelector.add(7, new LookAroundGoal(this));
-
+        this.goalSelector.add(6, new MoveThroughVillageGoal(this, 1.0, true, 4, this::getCanBreakDoors));
+        this.goalSelector.add(7, new WanderAroundFarGoal(this, 1.0));
+        this.goalSelector.add(8, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
+        this.goalSelector.add(8, new LookAroundGoal(this));
     }
+
+    public boolean getCanBreakDoors() {
+        return this.canBreakDoors;
+    }
+
+    public void setCanBreakDoors(boolean canBreakDoors) {
+        if (this.shouldBreakDoors() && NavigationConditions.hasMobNavigation(this)) {
+            if (this.canBreakDoors != canBreakDoors) {
+                this.canBreakDoors = canBreakDoors;
+                ((MobNavigation)this.getNavigation()).setCanPathThroughDoors(canBreakDoors);
+                if (canBreakDoors) {
+                    handSwinging = true;
+                    this.goalSelector.add(1, this.breakDoorsGoal);
+                } else {
+                    handSwinging = false;
+                    this.goalSelector.remove(this.breakDoorsGoal);
+                }
+            }
+        } else if (this.canBreakDoors) {
+            this.goalSelector.remove(this.breakDoorsGoal);
+            this.canBreakDoors = false;
+        }
+    }
+
+    protected boolean shouldBreakDoors() {
+        return true;
+    }
+
 
     public SoundCategory getSoundCategory() {
         return SoundCategory.HOSTILE;
@@ -69,6 +120,17 @@ public class BabyJohnEntity extends PathAwareEntity implements GeoEntity , Monst
 
     protected SoundEvent getDeathSound() {
         return  BABY_JOHN_DEATH;
+    }
+
+    @Override
+    public void writeCustomDataToNbt(NbtCompound nbt) {
+        super.writeCustomDataToNbt(nbt);
+        nbt.putBoolean("CanBreakDoors", this.getCanBreakDoors());
+    }
+
+    @Override
+    public void readCustomDataFromNbt(NbtCompound nbt) {
+        this.setCanBreakDoors(nbt.getBoolean("CanBreakDoors"));
     }
 
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenPlay("animation.John.walk");
