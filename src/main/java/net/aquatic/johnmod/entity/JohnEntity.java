@@ -1,5 +1,7 @@
 package net.aquatic.johnmod.entity;
 
+import net.minecraft.block.*;
+import net.minecraft.client.particle.Particle;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.ai.pathing.PathNodeType;
@@ -15,10 +17,14 @@ import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.particle.ParticleEffect;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.structure.StructureTemplateManager;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.*;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.structure.StructureKeys;
 import org.jetbrains.annotations.Nullable;
@@ -31,6 +37,7 @@ import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import static net.aquatic.johnmod.JohnMod.*;
+import static net.minecraft.world.gen.structure.StructureKeys.VILLAGE_DESERT;
 
 public class JohnEntity extends PathAwareEntity implements GeoEntity , Monster {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -88,13 +95,42 @@ public class JohnEntity extends PathAwareEntity implements GeoEntity , Monster {
 
     @Override
     public boolean canSpawn(WorldAccess world, SpawnReason spawnReason) {
-        if(this.getServer() != null && spawnReason == SpawnReason.MOB_SUMMONED) {
-            StructureAccessor structureAccessor = this.getServer().getOverworld().getStructureAccessor();
-            if (structureAccessor.getStructureContaining(this.getBlockPos(), StructureKeys.VILLAGE_DESERT) != null) {
-                return false;
+        StructureAccessor structureAccessor = this.getServer().getOverworld().getStructureAccessor();
+        int size = 50;
+        for(int x = -size; x<= size; x++){
+            for(int z = -size; z<= size; z++){
+                BlockPos spawnPos = new BlockPos(x + this.getBlockPos().getX(), this.getY(), z + this.getBlockPos().getZ());
+                if(!structureAccessor.getStructureContaining(spawnPos, VILLAGE_DESERT).isNeverReferenced()) {
+                    return false;
+                }
+                break;
+            }
+            break;
+        }
+
+        return super.canSpawn(world, spawnReason);
+    }
+
+    @Nullable
+    @Override
+    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt) {
+        if(spawnReason == SpawnReason.NATURAL){
+            if(world.getServer() != null) {
+                StructureAccessor structureAccessor = this.getServer().getOverworld().getStructureAccessor();
+                if(structureAccessor.getStructureContaining(getBlockPos(), VILLAGE_DESERT).getStructure() != null) {
+                    int size = 50;
+                    for (int x = -size; x <= size; x++) {
+                        for (int z = -size; z <= size; z++) {
+                            BlockPos spawnPos = new BlockPos(x + this.getBlockPos().getX(), this.getY(), z + this.getBlockPos().getZ());
+                            if(structureAccessor.getStructureContaining(spawnPos, VILLAGE_DESERT).getStructure() != null) {
+                                this.remove(RemovalReason.CHANGED_DIMENSION);
+                            }
+                        }
+                    }
+                }
             }
         }
-        return super.canSpawn(world, spawnReason);
+        return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
     }
 
     @Override

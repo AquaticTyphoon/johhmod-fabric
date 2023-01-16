@@ -1,5 +1,7 @@
 package net.aquatic.johnmod.entity;
 
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.NavigationConditions;
 import net.minecraft.entity.ai.goal.*;
@@ -17,8 +19,11 @@ import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.*;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.structure.StructureKeys;
@@ -34,6 +39,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.function.Predicate;
 
 import static net.aquatic.johnmod.JohnMod.*;
+import static net.minecraft.world.gen.structure.StructureKeys.VILLAGE_DESERT;
 
 public class BabyJohnEntity extends PathAwareEntity implements GeoEntity , Monster {
 
@@ -57,13 +63,6 @@ public class BabyJohnEntity extends PathAwareEntity implements GeoEntity , Monst
         return MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 20).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 3).add(EntityAttributes.GENERIC_ATTACK_SPEED, 0.4f).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.5).build();
     }
 
-    @Nullable
-    @Override
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt) {
-        this.setCanBreakDoors(this.shouldBreakDoors());
-        return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
-
-    }
 
     @Override
     protected void initGoals() {
@@ -149,17 +148,40 @@ public class BabyJohnEntity extends PathAwareEntity implements GeoEntity , Monst
 
     @Override
     public boolean canSpawn(WorldAccess world, SpawnReason spawnReason) {
-        if(this.getServer() != null && spawnReason == SpawnReason.MOB_SUMMONED) {
-            StructureAccessor structureAccessor = this.getServer().getOverworld().getStructureAccessor();
-            if (structureAccessor.getStructureContaining(this.getBlockPos(), StructureKeys.VILLAGE_DESERT) != null) {
-                return false;
+        return super.canSpawn(world, spawnReason);
+    }
+
+
+    @Nullable
+    @Override
+    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt) {
+        this.setCanBreakDoors(this.shouldBreakDoors());
+        if(spawnReason == SpawnReason.NATURAL){
+            if(world.getServer() != null) {
+                StructureAccessor structureAccessor = this.getServer().getOverworld().getStructureAccessor();
+                if(structureAccessor.getStructureContaining(getBlockPos(), VILLAGE_DESERT).getStructure() != null) {
+                    int size = 50;
+                    for (int x = -size; x <= size; x++) {
+                        for (int z = -size; z <= size; z++) {
+                            BlockPos spawnPos = new BlockPos(x + this.getBlockPos().getX(), this.getY(), z + this.getBlockPos().getZ());
+                            if(structureAccessor.getStructureContaining(spawnPos, VILLAGE_DESERT).getStructure() != null) {
+                                this.remove(RemovalReason.CHANGED_DIMENSION);
+                            }
+                        }
+                    }
+                }
             }
         }
-        return super.canSpawn(world, spawnReason);
+        return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
     }
 
     @Override
     public void tick() {
+
+
+
+
+
         if (world.getDifficulty() == Difficulty.PEACEFUL) {
             if(!world.isClient) {
                 this.remove(RemovalReason.CHANGED_DIMENSION);
