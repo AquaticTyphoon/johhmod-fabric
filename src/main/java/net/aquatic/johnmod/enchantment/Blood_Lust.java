@@ -50,7 +50,7 @@ public class Blood_Lust extends Enchantment {
                     user.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 60, 0));
                 }else{
                     user.removeStatusEffect(StatusEffects.POISON);
-                    user.heal(livingEntity.getMaxHealth() / 10f);
+                    user.heal(livingEntity.getMaxHealth() / 8f);
                 }
             }else{
                 user.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 120, 1));

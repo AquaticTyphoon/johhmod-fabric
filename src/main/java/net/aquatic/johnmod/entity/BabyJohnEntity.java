@@ -1,9 +1,6 @@
 package net.aquatic.johnmod.entity;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityGroup;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -17,9 +14,13 @@ import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
+import net.minecraft.world.gen.StructureAccessor;
+import net.minecraft.world.gen.structure.StructureKeys;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -54,6 +55,10 @@ public class BabyJohnEntity extends PathAwareEntity implements GeoEntity , Monst
 
     }
 
+    public SoundCategory getSoundCategory() {
+        return SoundCategory.HOSTILE;
+    }
+
     protected SoundEvent getAmbientSound() {
         return BABY_JOHN_AMBIENT;
     }
@@ -78,6 +83,17 @@ public class BabyJohnEntity extends PathAwareEntity implements GeoEntity , Monst
     public boolean damage(DamageSource source, float amount) {
         hasBenHit = true;
         return super.damage(source, amount);
+    }
+
+    @Override
+    public boolean canSpawn(WorldAccess world, SpawnReason spawnReason) {
+        if(this.getServer() != null && spawnReason == SpawnReason.MOB_SUMMONED) {
+            StructureAccessor structureAccessor = this.getServer().getOverworld().getStructureAccessor();
+            if (structureAccessor.getStructureContaining(this.getBlockPos(), StructureKeys.VILLAGE_DESERT) != null) {
+                return false;
+            }
+        }
+        return super.canSpawn(world, spawnReason);
     }
 
     @Override

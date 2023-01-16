@@ -18,6 +18,7 @@ import net.minecraft.entity.*;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -29,6 +30,7 @@ import static net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeB
 public class JohnMod implements ModInitializer {
 	public static final String MODID = "johnmod";
 	public static final Logger LOGGER = LoggerFactory.getLogger("MODID");
+
 	public static final SoundEvent JOHN_AMBIENT = SoundEvent.of(new Identifier(MODID, "john_ambient"));
 	public static final SoundEvent JOHN_DEATH = SoundEvent.of(new Identifier(MODID, "john_death"));
 	public static final SoundEvent JOHN_HURT = SoundEvent.of(new Identifier(MODID, "john_hurt"));

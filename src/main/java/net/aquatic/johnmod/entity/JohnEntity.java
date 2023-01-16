@@ -1,9 +1,6 @@
 package net.aquatic.johnmod.entity;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityGroup;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -17,8 +14,14 @@ import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.world.Difficulty;
+import net.minecraft.structure.StructureTemplateManager;
+import net.minecraft.world.*;
+import net.minecraft.world.gen.StructureAccessor;
+import net.minecraft.world.gen.structure.StructureKeys;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -26,7 +29,6 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
-import net.minecraft.world.World;
 
 import static net.aquatic.johnmod.JohnMod.*;
 
@@ -54,6 +56,10 @@ public class JohnEntity extends PathAwareEntity implements GeoEntity , Monster {
 
     }
 
+    public SoundCategory getSoundCategory() {
+        return SoundCategory.HOSTILE;
+    }
+
     protected SoundEvent getAmbientSound() {
         return JOHN_AMBIENT;
     }
@@ -63,7 +69,7 @@ public class JohnEntity extends PathAwareEntity implements GeoEntity , Monster {
     }
 
     protected SoundEvent getDeathSound() {
-        return JOHN_DEATH;
+        return  JOHN_DEATH;
     }
 
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenPlay("animation.John.walk");
@@ -81,13 +87,24 @@ public class JohnEntity extends PathAwareEntity implements GeoEntity , Monster {
     }
 
     @Override
+    public boolean canSpawn(WorldAccess world, SpawnReason spawnReason) {
+        if(this.getServer() != null && spawnReason == SpawnReason.MOB_SUMMONED) {
+            StructureAccessor structureAccessor = this.getServer().getOverworld().getStructureAccessor();
+            if (structureAccessor.getStructureContaining(this.getBlockPos(), StructureKeys.VILLAGE_DESERT) != null) {
+                return false;
+            }
+        }
+        return super.canSpawn(world, spawnReason);
+    }
+
+    @Override
     public void tick() {
+
         if (world.getDifficulty() == Difficulty.PEACEFUL) {
             if(!world.isClient) {
                 this.remove(RemovalReason.CHANGED_DIMENSION);
             }
         }
-
 
         if(hasBenHit){
             if(JohnHitTime <= JohnMaxReact){
