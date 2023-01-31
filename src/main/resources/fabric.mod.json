@@ -1,16 +1,18 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
+  "license": "MIT",
+  "id": "johnmod",
   "version": "${version}",
 
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "John's Revival",
+  "description": "This is a revival of of ImmortalHDFilms's John mod into Minecraft Java 1.19.3's Fabric Mod loader!",
   "authors": [
-    "Me!"
+    "AquaticTyphoon!"
   ],
+  "contributors": [],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://github.com/AquaticTyphoon/johhmod-fabric",
+    "sources": "https://github.com/AquaticTyphoon/johhmod-fabric/issues"
   },
 
   "license": "CC0-1.0",
