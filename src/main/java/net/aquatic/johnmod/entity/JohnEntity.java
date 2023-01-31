@@ -1,7 +1,5 @@
 package net.aquatic.johnmod.entity;
 
-import net.minecraft.block.*;
-import net.minecraft.client.particle.Particle;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.ai.pathing.PathNodeType;
@@ -17,16 +15,11 @@ import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.structure.StructureTemplateManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.*;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.StructureAccessor;
-import net.minecraft.world.gen.structure.StructureKeys;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -93,65 +86,53 @@ public class JohnEntity extends PathAwareEntity implements GeoEntity , Monster {
         return super.damage(source, amount);
     }
 
+    boolean dontSpawn;
     @Override
     public boolean canSpawn(WorldAccess world, SpawnReason spawnReason) {
-        StructureAccessor structureAccessor = this.getServer().getOverworld().getStructureAccessor();
-        int size = 50;
-        for(int x = -size; x<= size; x++){
-            for(int z = -size; z<= size; z++){
-                BlockPos spawnPos = new BlockPos(x + this.getBlockPos().getX(), this.getY(), z + this.getBlockPos().getZ());
-                if(!structureAccessor.getStructureContaining(spawnPos, VILLAGE_DESERT).isNeverReferenced()) {
-                    return false;
-                }
-                break;
-            }
-            break;
-        }
-
-        return super.canSpawn(world, spawnReason);
-    }
-
-    @Nullable
-    @Override
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt) {
-        if(spawnReason == SpawnReason.NATURAL){
-            if(world.getServer() != null) {
-                StructureAccessor structureAccessor = this.getServer().getOverworld().getStructureAccessor();
-                if(structureAccessor.getStructureContaining(getBlockPos(), VILLAGE_DESERT).getStructure() != null) {
-                    int size = 50;
-                    for (int x = -size; x <= size; x++) {
-                        for (int z = -size; z <= size; z++) {
-                            BlockPos spawnPos = new BlockPos(x + this.getBlockPos().getX(), this.getY(), z + this.getBlockPos().getZ());
-                            if(structureAccessor.getStructureContaining(spawnPos, VILLAGE_DESERT).getStructure() != null) {
-                                this.remove(RemovalReason.CHANGED_DIMENSION);
-                            }
+        if(getServer() != null ) {
+            StructureAccessor structureAccessor = this.getServer().getOverworld().getStructureAccessor();
+            if (spawnReason != null && spawnReason == SpawnReason.NATURAL) {
+                int size = 200;
+                outer:
+                for (int x = -size; x <= size; x++) {
+                    for (int z = -size; z <= size; z++) {
+                        BlockPos spawnCheck = new BlockPos(this.getX() + x, this.getY() - 1, this.getZ() + z);
+                        if (structureAccessor.getStructureContaining(spawnCheck, VILLAGE_DESERT).getStructure() != null) {
+                            dontSpawn = true;
+                            break outer;
                         }
                     }
                 }
             }
         }
+        if(dontSpawn){return false;}
+        return super.canSpawn(world, spawnReason);
+    }
+
+
+    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt) {
         return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
     }
 
     @Override
     public void tick() {
-
-        if (world.getDifficulty() == Difficulty.PEACEFUL) {
-            if(!world.isClient) {
-                this.remove(RemovalReason.CHANGED_DIMENSION);
+            if (world.getDifficulty() == Difficulty.PEACEFUL) {
+                if (!world.isClient) {
+                    this.remove(RemovalReason.CHANGED_DIMENSION);
+                }
             }
-        }
 
-        if(hasBenHit){
-            if(JohnHitTime <= JohnMaxReact){
-                JohnHitTime ++;
-                this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.15f);
-            }else{
-                JohnHitTime = 0;
-                hasBenHit = false;
-                this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.5f);
+            if (hasBenHit) {
+                if (JohnHitTime <= JohnMaxReact) {
+                    JohnHitTime++;
+                    this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.15f);
+                } else {
+                    JohnHitTime = 0;
+                    hasBenHit = false;
+                    this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.5f);
+                }
             }
-        }
+
         super.tick();
     }
 
