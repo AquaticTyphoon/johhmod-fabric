@@ -15,5 +15,6 @@
     "sounds.johnmod.baby_john.death": "John dies",
 
     "item.johnmod.immortality_shard": "Immortality Shard",
-    "enchantment.johnmod.blood_lust": "Curse of Blood Lust"
+    "enchantment.johnmod.blood_lust": "Curse of Blood Lust",
+    "block.johnmod.immortality_block": "Block of Immortality"
 }

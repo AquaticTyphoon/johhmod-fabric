@@ -9,7 +9,6 @@ public class ImmortalBlade extends SwordItem {
     public ImmortalBlade(ToolMaterial toolMaterial, int attackDamage, float attackSpeed, Settings settings) {
         super(toolMaterial, attackDamage, attackSpeed, settings);
     }
-
     @Override
     public boolean hasGlint(ItemStack stack) {
         if(stack.getEnchantments().isEmpty()){
