@@ -1,5 +1,10 @@
 {
     "variants": {
-      "": { "model": "johnmod:block/immortality_block" }
+      "renderer=true": {
+        "model": "johnmod:block/immortality_block"
+      },
+      "renderer=false": {
+        "model": "johnmod:block/immortality_block_unloaded"
+      }
     }
-}
+  }

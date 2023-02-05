@@ -1,0 +1,12 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "pattern":[
+        "I"
+    ],
+    "key":{
+        "I":{"item": "johnmod:immortality_block"}
+    },
+    "result":{
+        "item": "johnmod:immortality_gem"
+    }
+}

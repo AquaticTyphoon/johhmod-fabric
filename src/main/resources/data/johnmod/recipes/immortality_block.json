@@ -6,9 +6,9 @@
         "III"
     ],
     "key":{
-        "I":{"item": "johnmod:immortality_shard"}
+        "I":{"item": "johnmod:immortality_gem"}
     },
     "result":{
-        "item": "johnmod:immortality_gem"
+        "item": "johnmod:immortality_block"
     }
 }

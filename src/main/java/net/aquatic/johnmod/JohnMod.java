@@ -57,13 +57,12 @@ public class JohnMod implements ModInitializer {
 	public static final Item BABY_JOHN_EGG = new SpawnEggItem(BABY_JOHN_ENTITY, 0x74a269, 0x422c2c, new FabricItemSettings());
 	public static final Item IMMORTALITY_SHARD = new ImmortalityItem(new FabricItemSettings());
 	public static final Item IMMORTALITY_GEM = new ImmortalityItem(new FabricItemSettings());
-	private static final ToolMaterial ImmortalMaterial = new ImmortalMaterial();
-	public static final Item IMMORTAL_BLADE = new ImmortalBlade(ImmortalMaterial,4, 9.7f , new FabricItemSettings());
+	public static final Item IMMORTAL_BLADE = new ImmortalBlade(ToolMaterials.IRON,4, 9.7f , new FabricItemSettings());
 	private static final ItemGroup JOHN_MOD_ITEMS = FabricItemGroup.builder(new Identifier(MODID, "items"))
 			.icon(() -> new ItemStack(JOHN_EGG))
 			.build();
 	public static final Enchantment BLOOD_LUST = new Blood_Lust(Enchantment.Rarity.VERY_RARE, EnchantmentTarget.WEAPON, new EquipmentSlot[]{EquipmentSlot.MAINHAND});
-	public static final Block IMMORTALITY_BLOCK = Registry.register(Registries.BLOCK,new Identifier(MODID, "immortality_block"), new ImmortalityBlock(FabricBlockSettings.of(Material.METAL).strength(6f).requiresTool()));
+	public static final Block IMMORTALITY_BLOCK = Registry.register(Registries.BLOCK,new Identifier(MODID, "immortality_block"), new ImmortalityBlock(FabricBlockSettings.of(Material.METAL).strength(4f).requiresTool()));
 	public static BlockEntityType<ImmortalBlockEntity> IMMORTALITY_BLOCK_ENTITY;
 	@Override
 	public void onInitialize() {
