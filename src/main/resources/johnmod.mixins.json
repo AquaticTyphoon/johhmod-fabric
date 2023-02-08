@@ -6,7 +6,8 @@
   "mixins": [
   ],
   "client": [
-    "ExampleMixin"
+    "PistonMixin",
+    "PistonRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

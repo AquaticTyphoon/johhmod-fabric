@@ -9,7 +9,4 @@ public class ImmortalBlockEntity extends BlockEntity {
     public ImmortalBlockEntity(BlockPos pos, BlockState state) {
         super(JohnMod.IMMORTALITY_BLOCK_ENTITY, pos, state);
     }
-
-
-
 }

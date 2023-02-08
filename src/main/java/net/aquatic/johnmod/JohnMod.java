@@ -1,5 +1,6 @@
 package net.aquatic.johnmod;
 
+import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import net.aquatic.johnmod.blocks.ImmortalBlockEntity;
 import net.aquatic.johnmod.blocks.ImmortalityBlock;
 import net.aquatic.johnmod.enchantment.Blood_Lust;
@@ -66,6 +67,7 @@ public class JohnMod implements ModInitializer {
 	public static BlockEntityType<ImmortalBlockEntity> IMMORTALITY_BLOCK_ENTITY;
 	@Override
 	public void onInitialize() {
+		MixinExtrasBootstrap.init();
 		GeckoLib.initialize();
 		FabricDefaultAttributeRegistry.register(JOHN_ENTITY, JohnEntity.johnAttributes());
 		Registry.register(Registries.ITEM, new Identifier(MODID, "john_spawn_egg"), JOHN_EGG);
@@ -85,5 +87,6 @@ public class JohnMod implements ModInitializer {
 
 		Registry.register(Registries.ENCHANTMENT, new Identifier(MODID, "blood_lust"), BLOOD_LUST);
 		EntitySpawns.addEntitySpawn();
+
 	}
 }
