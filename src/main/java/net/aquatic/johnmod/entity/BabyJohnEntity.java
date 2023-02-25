@@ -1,8 +1,7 @@
 package net.aquatic.johnmod.entity;
 
-import net.minecraft.block.AirBlock;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.advancement.Advancement;
+import net.minecraft.advancement.AdvancementProgress;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.NavigationConditions;
 import net.minecraft.entity.ai.goal.*;
@@ -20,8 +19,10 @@ import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.*;
@@ -35,6 +36,7 @@ import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.Iterator;
 import java.util.function.Predicate;
 
 import static net.aquatic.johnmod.JohnMod.*;
@@ -235,5 +237,23 @@ public class BabyJohnEntity extends PathAwareEntity implements GeoEntity , Monst
 
     public EntityGroup getGroup() {
         return JOHN_GROUP;
+    }
+
+    @Override
+    protected void onKilledBy(@Nullable LivingEntity adversary) {
+        if(adversary instanceof ServerPlayerEntity player){
+            if(!player.world.isClient) {
+                Advancement killMonster = player.server.getAdvancementLoader().get(new Identifier("minecraft:adventure/kill_a_mob"));
+                AdvancementProgress progress = player.getAdvancementTracker().getProgress(killMonster);
+                Iterator iterator = progress.getUnobtainedCriteria().iterator();
+                if (!progress.isDone()) {
+                    while(iterator.hasNext()) {
+                        String string = (String)iterator.next();
+                        player.getAdvancementTracker().grantCriterion(killMonster, string);
+                    }
+                }
+            }
+        }
+        super.onKilledBy(adversary);
     }
 }

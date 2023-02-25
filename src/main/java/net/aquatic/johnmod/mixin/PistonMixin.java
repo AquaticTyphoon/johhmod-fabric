@@ -17,7 +17,6 @@ public abstract class PistonMixin extends FacingBlock {
 	protected PistonMixin(Settings settings) {
 		super(settings);
 	}
-
 	@Inject(method = "isMovable", at = @At(value = "HEAD"), cancellable = true)
 	private static void isMovable(BlockState state, World world, BlockPos pos, Direction direction, boolean canBreak, Direction pistonDir, CallbackInfoReturnable<Boolean> info) {
 		if (state.isOf(JohnMod.IMMORTALITY_BLOCK)) {
@@ -26,5 +25,4 @@ public abstract class PistonMixin extends FacingBlock {
 			}
 		}
 	}
-
 }

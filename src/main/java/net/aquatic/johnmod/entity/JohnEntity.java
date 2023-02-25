@@ -1,5 +1,7 @@
 package net.aquatic.johnmod.entity;
 
+import net.minecraft.advancement.Advancement;
+import net.minecraft.advancement.AdvancementProgress;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.ai.pathing.PathNodeType;
@@ -15,8 +17,10 @@ import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.*;
 import net.minecraft.world.gen.StructureAccessor;
@@ -29,6 +33,8 @@ import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.Iterator;
+
 import static net.aquatic.johnmod.JohnMod.*;
 import static net.minecraft.world.gen.structure.StructureKeys.VILLAGE_DESERT;
 
@@ -38,11 +44,9 @@ public class JohnEntity extends PathAwareEntity implements GeoEntity , Monster {
         super(entityType, world);
         this.setPathfindingPenalty(PathNodeType.WATER, -1.0F);
     }
-
     public static DefaultAttributeContainer johnAttributes() {
         return MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 50).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6).add(EntityAttributes.GENERIC_ATTACK_SPEED, 0.4f).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.5).build();
     }
-
     @Override
     protected void initGoals() {
         this.goalSelector.add(1, new SwimGoal(this));
@@ -180,5 +184,21 @@ public class JohnEntity extends PathAwareEntity implements GeoEntity , Monster {
         return JOHN_GROUP;
     }
 
-
+    @Override
+    protected void onKilledBy(@Nullable LivingEntity adversary) {
+        if(adversary instanceof ServerPlayerEntity player){
+            if(!player.world.isClient) {
+                Advancement killMonster = player.server.getAdvancementLoader().get(new Identifier("minecraft:adventure/kill_a_mob"));
+                AdvancementProgress progress = player.getAdvancementTracker().getProgress(killMonster);
+                Iterator iterator = progress.getUnobtainedCriteria().iterator();
+                if (!progress.isDone()) {
+                    while(iterator.hasNext()) {
+                        String string = (String)iterator.next();
+                        player.getAdvancementTracker().grantCriterion(killMonster, string);
+                    }
+                }
+            }
+        }
+        super.onKilledBy(adversary);
+    }
 }

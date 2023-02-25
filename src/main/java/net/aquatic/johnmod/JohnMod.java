@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import software.bernie.geckolib.GeckoLib;
 
 import static net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder.*;
-import static software.bernie.example.registry.BlockRegistry.registerBlock;
 
 public class JohnMod implements ModInitializer {
 	public static final String MODID = "johnmod";
@@ -48,11 +47,11 @@ public class JohnMod implements ModInitializer {
 	public static final EntityGroup JOHN_GROUP = new EntityGroup();
 	public static final EntityType<JohnEntity> JOHN_ENTITY = Registry.register(
 			Registries.ENTITY_TYPE,
-			new Identifier(MODID, "john"), create(SpawnGroup.CREATURE, JohnEntity::new).dimensions(EntityDimensions.fixed(1, 3)).fireImmune().build()
+			new Identifier(MODID, "john"), create(SpawnGroup.CREATURE, JohnEntity::new).dimensions(EntityDimensions.fixed(0.8f, 2.5f)).fireImmune().build()
 	);
 	public static final EntityType<BabyJohnEntity> BABY_JOHN_ENTITY = Registry.register(
 			Registries.ENTITY_TYPE,
-			new Identifier(MODID, "baby_john"), create(SpawnGroup.CREATURE, BabyJohnEntity::new).dimensions(EntityDimensions.fixed(0.5f, 0.5f)).fireImmune().build()
+			new Identifier(MODID, "baby_john"), create(SpawnGroup.CREATURE, BabyJohnEntity::new).dimensions(EntityDimensions.fixed(0.8f, 1)).fireImmune().build()
 	);
 	public static final Item JOHN_EGG = new SpawnEggItem(JOHN_ENTITY, 0x65895d, 0x422c2c, new FabricItemSettings());
 	public static final Item BABY_JOHN_EGG = new SpawnEggItem(BABY_JOHN_ENTITY, 0x74a269, 0x422c2c, new FabricItemSettings());
@@ -81,6 +80,7 @@ public class JohnMod implements ModInitializer {
 		ItemGroupEvents.modifyEntriesEvent(JOHN_MOD_ITEMS).register(entries -> entries.add(IMMORTALITY_SHARD));
 		ItemGroupEvents.modifyEntriesEvent(JOHN_MOD_ITEMS).register(entries -> entries.add(IMMORTALITY_GEM));
 		ItemGroupEvents.modifyEntriesEvent(JOHN_MOD_ITEMS).register(entries -> entries.add(IMMORTAL_BLADE));
+		ItemGroupEvents.modifyEntriesEvent(JOHN_MOD_ITEMS).register(entries -> entries.add(IMMORTALITY_BLOCK));
 
 		Registry.register(Registries.ITEM, new Identifier(MODID, "immortality_block"), new ImmortalityBlockItem(IMMORTALITY_BLOCK, new FabricItemSettings()));
 		IMMORTALITY_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE,new Identifier(JohnMod.MODID, "immortality_block"), FabricBlockEntityTypeBuilder.create(ImmortalBlockEntity::new, IMMORTALITY_BLOCK).build(null));
