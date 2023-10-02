@@ -1,8 +1,7 @@
-# Fabric Example Mod
+# Johnmod fabric port expanded
 
-## Setup
-
-For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
+As of October 2nd 2023, this repo is on an offical hiatus.
+I need to learn more java before I touch anything else and have also been very busy on IRL stuff.
 
 ## License
 
